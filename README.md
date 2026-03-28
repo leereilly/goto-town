@@ -17,7 +17,7 @@ A ridiculous web game controlled with your eyes, brows, and bawls
 </div>
 <br>
 <br>
-One boy. One bike. One impossibly congested highway. Zero excuses for being late to Mr Smeed's 9 AM lecture on Low Level Programming." Made for [Jerbob's Silly Jam](https://leereilly.itch.io/goto-town).
+One boy. One bike. One impossibly congested highway. Zero excuses for being late to Mr Smeed's 9 AM lecture on Low Level Programming. Made for [Jerbob's Silly Jam](https://leereilly.itch.io/goto-town).
 
 ---
 
