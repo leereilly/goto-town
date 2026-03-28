@@ -24,6 +24,9 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('white-plumbing-van', 'vehicles/white-plumbing-van.png');
     this.load.image('yellow-bus', 'vehicles/yellow-bus.png');
     this.load.image('yellow-sports-car', 'vehicles/yellow-sports-car.png');
+
+    // Background music
+    this.load.audio('bgMusic', 'happy.mp3');
   }
 
   create(): void {

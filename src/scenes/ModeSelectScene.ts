@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { GAME_WIDTH } from '../config/constants';
 import { sfx } from '../audio/sfx';
+import { loadCalibration } from '../input/CalibrationProfile';
 
 export type GameMode = 'campaign' | 'endless';
 
@@ -8,6 +9,7 @@ type MenuItem = {
   label: string;
   mode?: GameMode;
   scene?: string;
+  forceCalibration?: boolean;
   description: string;
 };
 
@@ -26,9 +28,14 @@ export default class ModeSelectScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor('#1a1a2e');
     this.selectedIndex = 0;
     this.menuTexts = [];
+    const hasCalibration = loadCalibration() !== null;
+
     this.menuDefs = [
       { label: 'CAMPAIGN', mode: 'campaign', description: 'Race through 3 stages\nto reach town!' },
       { label: 'ENDLESS', mode: 'endless', description: 'How far can you go?\nStages loop and get harder!' },
+      ...(hasCalibration
+        ? [{ label: 'RECALIBRATE', scene: 'Permission', forceCalibration: true, description: 'Re-run face & voice\ncalibration' } as MenuItem]
+        : []),
       { label: 'CREDITS', scene: 'Credits', description: 'Who made this thing?' },
       { label: 'SOURCE CODE', scene: 'SourceCode', description: 'View the source code\non GitHub' },
     ];
@@ -46,7 +53,7 @@ export default class ModeSelectScene extends Phaser.Scene {
     this.add.sprite(GAME_WIDTH / 2, 68, 'bike').setScale(2);
 
     const startY = 98;
-    const spacing = 22;
+    const spacing = 18;
 
     this.menuDefs.forEach((item, i) => {
       const text = this.add
@@ -67,8 +74,10 @@ export default class ModeSelectScene extends Phaser.Scene {
       })
       .setOrigin(0.5, 0.5);
 
+    const descY = startY + this.menuDefs.length * spacing + 16;
+
     this.descriptionText = this.add
-      .text(GAME_WIDTH / 2, 195, '', {
+      .text(GAME_WIDTH / 2, descY, '', {
         fontFamily: 'monospace',
         fontSize: '8px',
         color: '#aaaaaa',
@@ -114,7 +123,10 @@ export default class ModeSelectScene extends Phaser.Scene {
 
   private confirmSelection(): void {
     const item = this.menuDefs[this.selectedIndex];
-    if (item.scene) {
+    if (item.forceCalibration) {
+      this.game.registry.set('forceCalibration', true);
+      this.scene.start(item.scene!);
+    } else if (item.scene) {
       this.scene.start(item.scene);
     } else if (item.mode) {
       this.game.registry.set('gameMode', item.mode);

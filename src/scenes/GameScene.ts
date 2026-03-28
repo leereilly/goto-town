@@ -13,6 +13,9 @@ import { sfx } from '../audio/sfx';
 import { MAX_HP } from '../config/constants';
 import type { GameMode } from '../systems/StageSystem';
 
+/** Registry key for the persistent background music instance. */
+const BG_MUSIC_KEY = 'bgMusic';
+
 interface GameSceneData {
   stage?: number;
   hp?: number;
@@ -72,6 +75,9 @@ export default class GameScene extends Phaser.Scene {
 
     this.debugOverlay = new DebugOverlay();
     this.debugOverlay.create(this);
+
+    // Background music
+    this.startMusic();
 
     // Input — keyboard works immediately; face/audio init is async
     const calibration = loadCalibration() ?? defaultCalibration();
@@ -156,6 +162,7 @@ export default class GameScene extends Phaser.Scene {
       sfx.play('hit');
       if (this.player.hp <= 0) {
         sfx.play('gameOver');
+        this.stopMusic();
         this.cleanup();
         this.scene.start('GameOver', {
           elapsedTime: this.elapsedTime,
@@ -199,6 +206,7 @@ export default class GameScene extends Phaser.Scene {
     if (this.stageSystem.stageComplete) {
       if (this.stageSystem.isLastStage()) {
         sfx.play('victory');
+        this.stopMusic();
         this.cleanup();
         this.scene.start('Victory', { elapsedTime: this.elapsedTime });
       } else {
@@ -215,6 +223,36 @@ export default class GameScene extends Phaser.Scene {
 
     // 14. Reset input
     this.inputManager.reset();
+  }
+
+  private startMusic(): void {
+    let music = this.game.registry.get(BG_MUSIC_KEY) as
+      | Phaser.Sound.BaseSound
+      | undefined;
+
+    if (!music || !music.isPlaying) {
+      if (music) music.destroy();
+      music = this.sound.add('bgMusic');
+      this.game.registry.set(BG_MUSIC_KEY, music);
+      music.play({ loop: true, volume: 0.5 });
+    }
+
+    // In endless mode, increase playback rate 1% per cleared stage
+    const isEndless =
+      (this.game.registry.get('gameMode') as GameMode) === 'endless';
+    const rate = isEndless ? 1 + this.initStage * 0.01 : 1;
+    (music as Phaser.Sound.WebAudioSound).setRate(rate);
+  }
+
+  private stopMusic(): void {
+    const music = this.game.registry.get(BG_MUSIC_KEY) as
+      | Phaser.Sound.BaseSound
+      | undefined;
+    if (music) {
+      music.stop();
+      music.destroy();
+      this.game.registry.set(BG_MUSIC_KEY, undefined);
+    }
   }
 
   private cleanup(): void {

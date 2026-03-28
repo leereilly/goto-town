@@ -22,6 +22,7 @@ export default class CreditsScene extends Phaser.Scene {
       { label: 'A game by', value: 'Lee Reilly' },
       { label: 'Built with', value: 'Phaser 3' },
       { label: 'Vehicle assets', value: 'Kenney.nl' },
+      { label: 'Music', value: '"Happy Chiptune" from Pixabay' },
       { label: 'Audio', value: 'Web Audio API' },
       { label: 'Vibes', value: 'GitHub Copilot' },
     ];
@@ -48,9 +49,6 @@ export default class CreditsScene extends Phaser.Scene {
         })
         .setOrigin(0.5, 0.5);
     });
-
-    // Decorative bike
-    this.add.sprite(GAME_WIDTH / 2, 212, 'bike').setScale(2);
 
     const blinkText = this.add
       .text(GAME_WIDTH / 2, 230, 'Press ESC to go back', {

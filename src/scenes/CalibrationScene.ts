@@ -97,7 +97,13 @@ export default class CalibrationScene extends Phaser.Scene {
         if (this.step === 'G' && this.canProceed) {
           saveCalibration(this.profile);
           this.cleanup();
-          this.scene.start('Game', { stage: 0, hp: 3 });
+          const forceCalibration = this.game.registry.get('forceCalibration') ?? false;
+          if (forceCalibration) {
+            this.game.registry.set('forceCalibration', false);
+            this.scene.start('ModeSelect');
+          } else {
+            this.scene.start('Game', { stage: 0, hp: 3 });
+          }
         }
       },
     );

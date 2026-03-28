@@ -2,6 +2,8 @@
 
 A ridiculous web game controlled with your eyes, brows, and bawls
 
+![](public/logo.png)
+
 <div align="center">
     <img height="60" src="public/brows/1.gif">
     <img height="60" src="public/brows/2.gif">
@@ -160,6 +162,8 @@ If you're Mia Goth or another hawt Hollywood celeb with no eyebrows, please cont
 Built with [Phaser 3](https://phaser.io/), [MediaPipe Face Landmarker](https://developers.google.com/mediapipe), Web Audio API, TypeScript, and an unreasonable amount of eyebrow movement.
 
 Vehicle sprites from [Kenney's Car Kit](https://kenney.nl/).
+
+Music: ["Happy Chiptune"](https://pixabay.com/sound-effects/musical-happly-chiptune-122877/) from [Pixabay](https://pixabay.com/) ([Pixabay Content License](https://pixabay.com/service/license-summary/)).
 
 Redonkolous coding by GitHub Copilot.
 

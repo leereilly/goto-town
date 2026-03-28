@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT } from '../config/constants';
+import { loadCalibration } from '../input/CalibrationProfile';
 
 export default class PermissionScene extends Phaser.Scene {
   private statusText!: Phaser.GameObjects.Text;
@@ -42,8 +43,14 @@ export default class PermissionScene extends Phaser.Scene {
       'down',
       () => {
         if (!this.permissionsResolved) return;
+        const forceCalibration = this.game.registry.get('forceCalibration') ?? false;
         if (this.permissionsGranted) {
-          this.scene.start('Calibration');
+          const hasExisting = loadCalibration() !== null;
+          if (hasExisting && !forceCalibration) {
+            this.scene.start('Game', { stage: 0, hp: 3 });
+          } else {
+            this.scene.start('Calibration');
+          }
         } else {
           this.scene.start('Game', { stage: 0, hp: 3 });
         }
@@ -112,9 +119,15 @@ export default class PermissionScene extends Phaser.Scene {
       if (hasMic) parts.push('Mic');
       this.statusText.setText(`${parts.join(' & ')} ready!`);
       this.statusText.setColor('#00ff00');
-      this.instructionText.setText(
-        'Press ENTER to calibrate\nface & voice controls',
-      );
+      const forceCalibration = this.game.registry.get('forceCalibration') ?? false;
+      const hasExisting = loadCalibration() !== null;
+      if (hasExisting && !forceCalibration) {
+        this.instructionText.setText('Press ENTER to play');
+      } else {
+        this.instructionText.setText(
+          'Press ENTER to calibrate\nface & voice controls',
+        );
+      }
     } else {
       this.game.registry.set('hasWebcam', false);
       this.game.registry.set('hasMic', false);
